@@ -1,11 +1,11 @@
 const express = require("express");
 
-
 const contacts = require("../../models/contacts");
 const { HttpError } = require("../../helpers");
 const router = express.Router();
 
-const { addSchema } = require("../../utils/validation")
+const { addSchema } = require("../../models/contact");
+const { addFavoriteSchema } = require("../../models/contact");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -21,7 +21,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const result = await contacts.getContactById(id);
     if (!result) {
-    throw  new HttpError(404, "Not found");
+      throw new HttpError(404, "Not found");
     }
     res.json(result);
   } catch (error) {
@@ -65,6 +65,24 @@ router.put("/:id", async (req, res, next) => {
     }
     const { id } = req.params;
     const result = await contacts.updateContact(id, req.body);
+    if (!result) {
+      throw new HttpError(404, "Not found");
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/:id/favorite", async (req, res, next) => {
+  try {
+    const { error } = addFavoriteSchema.validate(req.body);
+    if (error) {
+      throw new HttpError(400, "missing field favorite");
+    }
+    const { id } = req.params;
+    const { favorite } = req.body;
+    const result = await contacts.updateStatusContact(id, favorite);
     if (!result) {
       throw new HttpError(404, "Not found");
     }

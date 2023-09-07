@@ -7,10 +7,9 @@ async function register(req, res, next) {
   const { password, email } = req.body;
 
   try {
-    const user = await User.findOne({ email }).exec();
-    if (user !== null) {
-      // throw new HttpError(409, "Email in use") Не виходить змінити status при використанні HttpError
-      return res.status(409).send({ message: "Email in use" });
+    const user = await User.findOne({ email });
+    if (user) {
+      throw new HttpError(409, "Email in use");
     }
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -29,13 +28,13 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email }).exec();
-    if (user === null) {
-      return res.status(401).send({ message: "Email or password is wrong" });
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new HttpError(401, "Email or password is wrong");
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch !== true) {
-      return res.status(401).send({ message: "Email or password is wrong" });
+      throw new HttpError(401, "Email or password is wrong");
     }
     const token = jwt.sign(
       {
@@ -46,7 +45,7 @@ async function login(req, res, next) {
         expiresIn: 3600,
       }
     );
-    await User.findByIdAndUpdate(user._id, { token }).exec();
+    await User.findByIdAndUpdate(user._id, { token });
 
     res.status(201).json({
       token: token,
@@ -62,7 +61,7 @@ async function login(req, res, next) {
 
 async function logout(req, res, next) {
   try {
-    await User.findByIdAndUpdate(req.user.id, { token: null }).exec();
+    await User.findByIdAndUpdate(req.user.id, { token: null });
     res.status(204).end();
   } catch (error) {
     next(error);

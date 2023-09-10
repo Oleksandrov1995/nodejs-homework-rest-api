@@ -1,4 +1,4 @@
-const  mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const userSchema = new mongoose.Schema(
@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
     token: {
       type: String,
       default: null,
+    },
+    avatarUrl: {
+      type: String,
     },
   },
   { versionKey: false, timestamps: true }

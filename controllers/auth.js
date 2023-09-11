@@ -2,6 +2,7 @@ const { User } = require("../models/user");
 const { HttpError } = require("../helpers");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 async function register(req, res, next) {
   const { password, email } = req.body;
@@ -12,12 +13,17 @@ async function register(req, res, next) {
       throw new HttpError(409, "Email in use");
     }
     const passwordHash = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({ password: passwordHash, email });
+    const avatarUrl = gravatar.url(email);
+    const newUser = await User.create({
+      password: passwordHash,
+      email,
+      avatarUrl,
+    });
     res.status(201).json({
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarUrl: newUser.avatarUrl,
       },
     });
   } catch (error) {
@@ -52,6 +58,7 @@ async function login(req, res, next) {
       user: {
         email: user.email,
         subscription: user.subscription,
+        avatarUrl: user.avatarUrl,
       },
     });
   } catch (error) {

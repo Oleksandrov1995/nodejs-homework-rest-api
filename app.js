@@ -1,14 +1,14 @@
 const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
-
+const path = require("node:path")
 
 const routes = require("./routes/api")
 
 const app = express()
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
-
+app.use("/avatars", express.static(path.join(__dirname, "public/avatar")))
 app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
@@ -21,7 +21,7 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  res.status(err.status).json({ message: err.message })
+  res.status(500).json({ message: err.message })
 })
 
 

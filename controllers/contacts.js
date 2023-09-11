@@ -83,7 +83,7 @@ async function updateContactStatus(req, res, next) {
       throw new HttpError(404, "Not found");
     }
     if (result.owner.toString() !== req.user.id) {
-      return res.status(404).send({ message: "Not found" });
+      return res.status(404).json({ message: "Not found" });
     }
     res.json(result);
   } catch (error) {

@@ -10,7 +10,7 @@ async function uploadAvatar(req, res, next) {
     const avatarPath = path.join(
       __dirname,
       "..",
-      "public/avatar",
+      "public","avatar",
       req.file.filename
     );
     await image.writeAsync(avatarPath);

@@ -3,6 +3,5 @@ node_modules/
 .idea
 .vscode
 tmp/*
-!tmp/.gitkeep
 public/avatar*
-!public/avatar/.gitkeep
+!/**/.gitkeep

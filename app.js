@@ -2,7 +2,7 @@ const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
 const path = require("node:path")
-
+require('dotenv').config();
 const routes = require("./routes/api")
 
 const app = express()
